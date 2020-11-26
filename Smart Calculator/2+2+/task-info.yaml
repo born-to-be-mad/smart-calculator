@@ -1,21 +1,6 @@
 type: edu
 custom_name: stage2
 files:
-- name: src/calculator/Main.java
-  visible: true
-  text: |
-    package calculator;
-
-    import java.util.Scanner;
-
-    public class Main {
-
-        public static void main(String[] args) {
-            Scanner scanner = new Scanner(System.in);
-            // put your code here
-        }
-    }
-  learner_created: false
 - name: test/Test.java
   visible: false
   text: |
@@ -135,6 +120,21 @@ files:
                         return new CheckResult(main.isFinished(), "Your program should exit after entering \"/exit\".");
                     })
             );
+        }
+    }
+  learner_created: false
+- name: src/calculator/Main.java
+  visible: true
+  text: |
+    package calculator;
+
+    import java.util.Scanner;
+
+    public class Main {
+
+        public static void main(String[] args) {
+            Scanner scanner = new Scanner(System.in);
+            // put your code here
         }
     }
   learner_created: false
