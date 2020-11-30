@@ -14,14 +14,16 @@ public class Main {
 
     private static final String COMMAND_EXIT = "/exit";
     private static final String MESSAGE_BYE = "Bye!";
+    private static final String COMMAND_HELP = "/help";
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        List<Integer> inputNumbers;
         String input = scanner.nextLine();
         while (!input.equals(COMMAND_EXIT)) {
             input = input.trim();
-            if (input.length() > 0) {
+            if (COMMAND_HELP.equalsIgnoreCase(input)) {
+                System.out.println("The program calculates the sum of numbers");
+            } else if (input.length() > 0) {
                 processInputNumbers(input);
             }
             input = scanner.nextLine();
@@ -31,24 +33,21 @@ public class Main {
     }
 
     private static void processInputNumbers(String input) {
-        List<Integer> inputNumbers;
-        inputNumbers = Arrays.stream(input.split("\\s+"))
-                     .map(Integer::parseInt)
-                     .collect(Collectors.toList());
+        List<Integer> inputNumbers = Arrays.stream(input.split("\\s+"))
+                                           .map(Integer::parseInt)
+                                           .collect(Collectors.toList());
 
         switch (inputNumbers.size()) {
         case 1:
             System.out.println(inputNumbers.get(0));
             break;
-        case 2:
-            System.out.println(process(inputNumbers.get(0), inputNumbers.get(1)));
-            break;
         default:
+            System.out.println(process(inputNumbers));
             break;
         }
     }
 
-    private static int process(Integer left, Integer right) {
-        return left + right;
+    private static int process(List<Integer> numbers) {
+        return numbers.stream().reduce(0, Integer::sum);
     }
 }
