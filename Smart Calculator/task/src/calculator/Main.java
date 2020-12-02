@@ -3,6 +3,7 @@ package calculator;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -14,7 +15,9 @@ import java.util.stream.Collectors;
  */
 public class Main {
 
+    private final static boolean DEBUG = false;
     private final static Pattern IS_DIGIT = Pattern.compile("[+-]?\\d+");
+    private final static Pattern IS_OPERATOR = Pattern.compile("[+-]+");
 
     private static final Map<Character, Character> OPPOSITE_OPERATORS = Map.of('+', '+', '-', '+', '*', '*', '/', '/');
 
@@ -27,8 +30,12 @@ public class Main {
         String input = scanner.nextLine();
         while (!input.equals(COMMAND_EXIT)) {
             input = input.trim();
-            if (COMMAND_HELP.equalsIgnoreCase(input)) {
-                System.out.println("The program calculates the sum of numbers");
+            if (input.startsWith("/")) {
+                if (COMMAND_HELP.equalsIgnoreCase(input)) {
+                    System.out.println("The program calculates the sum of numbers");
+                } else {
+                    System.out.println("Unknown command");
+                }
             } else if (input.length() > 0) {
                 processInputNumbers(input);
             }
@@ -42,35 +49,49 @@ public class Main {
         List<String> inputNumbers = Arrays.stream(input.split("\\s+"))
                                           .collect(Collectors.toList());
 
-        if (inputNumbers.size() == 1) {
-            System.out.println(inputNumbers.get(0));
-        } else {
-            System.out.println(process(inputNumbers));
-        }
+        process(inputNumbers).ifPresent(System.out::println);
     }
 
-    private static int process(List<String> numbers) {
-        //return numbers.stream().reduce(0, Integer::sum);
-        int result = 0;
-        char operator = '+';
-        for (String number : numbers) {
-            if (IS_DIGIT.matcher(number).matches()) {
-                switch (operator) {
-                case '+':
-                    result += Integer.parseInt(number);
-                    break;
-                case '-':
-                    result -= Integer.parseInt(number);
-                    break;
-                default:
-                    break;
+    private static Optional<Integer> process(List<String> strings) {
+        debug(strings);
+        int result = Integer.MIN_VALUE;
+        char operator = '#';
+        int current = 0;
+        int next = 0;
+        for (String string : strings) {
+            debug("Processing string:" + string);
+            if (IS_DIGIT.matcher(string).matches()) {
+                current = Integer.parseInt(string);
+                if (result == Integer.MIN_VALUE) {
+                    result = current;
+                } else {
+                    switch (operator) {
+                    case '+':
+                        result += current;
+                        break;
+                    case '-':
+                        result -= current;
+                        break;
+                    default:
+                        System.out.println("Invalid expression");
+                        break;
+                    }
                 }
-
+            } else if (IS_OPERATOR.matcher(string).matches()) {
+                operator = identifyOperator(string);
+                debug("operator found:" + operator);
             } else {
-                operator = identifyOperator(number);
+                System.out.println("Invalid expression");
+                return Optional.empty();
             }
         }
-        return result;
+        return Optional.of(result);
+    }
+
+    private static void debug(Object obj) {
+        if (DEBUG) {
+            System.out.println(obj);
+        }
     }
 
     private static char identifyOperator(String number) {
