@@ -292,6 +292,12 @@ files:
         }
     }
   learner_created: false
+- name: src/calculator/Calculator.java
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/projects/42/stages/225/implement#comment
-status: Unchecked
+status: Solved
+feedback:
+  message: Congratulations!
+  time: Tue, 08 Dec 2020 08:58:47 UTC
 record: -1

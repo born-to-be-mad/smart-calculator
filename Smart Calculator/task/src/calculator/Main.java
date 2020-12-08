@@ -1,12 +1,10 @@
 package calculator;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.Scanner;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+
+import static calculator.Calculator.EXPRESSION_REGEX;
+import static calculator.Calculator.LETTERS_REGEX;
+import static calculator.Calculator.NUMBERS_REGEX;
 
 /**
  * A program that reads two numbers in a loop and calculates the result in the standard output.
@@ -16,91 +14,64 @@ import java.util.stream.Collectors;
 public class Main {
 
     private final static boolean DEBUG = false;
-    private final static Pattern IS_DIGIT = Pattern.compile("[+-]?\\d+");
-    private final static Pattern IS_OPERATOR = Pattern.compile("[+-]+");
 
-    private static final Map<Character, Character> OPPOSITE_OPERATORS = Map.of('+', '+', '-', '+', '*', '*', '/', '/');
+    private static final String COMMAND_REGEX = "/\\w+";
+    private static final String ASSIGNMENT_DELIMITER_REGEX = "\\s*=\\s*";
 
     private static final String COMMAND_EXIT = "/exit";
     private static final String MESSAGE_BYE = "Bye!";
-    private static final String COMMAND_HELP = "/help";
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        String input = scanner.nextLine();
+        Calculator calculator = new Calculator();
+
+        String input = scanner.nextLine().trim();
         while (!input.equals(COMMAND_EXIT)) {
-            input = input.trim();
-            if (input.startsWith("/")) {
-                if (COMMAND_HELP.equalsIgnoreCase(input)) {
-                    System.out.println("The program calculates the sum of numbers");
-                } else {
-                    System.out.println("Unknown command");
+            if (input.matches(COMMAND_REGEX)) {
+                System.out.println(calculator.getCommandInfo(input).orElse("Unknown command"));
+            } else if (isValidAssignment(input)) {
+                calculator.assign(input);
+            } else if (input.matches(LETTERS_REGEX)) {
+                System.out.println(calculator.getVariableValue(input).orElse("Unknown variable"));
+            } else if (!"".equals(input) && input.matches(EXPRESSION_REGEX)) {
+                try {
+                    int sum = calculator.calculate(input);
+                    System.out.println(sum);
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid expression");
                 }
-            } else if (input.length() > 0) {
-                processInputNumbers(input);
             }
-            input = scanner.nextLine();
+            input = scanner.nextLine().trim();
         }
 
         System.out.println(MESSAGE_BYE);
     }
 
-    private static void processInputNumbers(String input) {
-        List<String> inputNumbers = Arrays.stream(input.split("\\s+"))
-                                          .collect(Collectors.toList());
-
-        process(inputNumbers).ifPresent(System.out::println);
-    }
-
-    private static Optional<Integer> process(List<String> strings) {
-        debug(strings);
-        int result = Integer.MIN_VALUE;
-        char operator = '#';
-        int current = 0;
-        int next = 0;
-        for (String string : strings) {
-            debug("Processing string:" + string);
-            if (IS_DIGIT.matcher(string).matches()) {
-                current = Integer.parseInt(string);
-                if (result == Integer.MIN_VALUE) {
-                    result = current;
-                } else {
-                    switch (operator) {
-                    case '+':
-                        result += current;
-                        break;
-                    case '-':
-                        result -= current;
-                        break;
-                    default:
-                        System.out.println("Invalid expression");
-                        break;
-                    }
-                }
-            } else if (IS_OPERATOR.matcher(string).matches()) {
-                operator = identifyOperator(string);
-                debug("operator found:" + operator);
-            } else {
-                System.out.println("Invalid expression");
-                return Optional.empty();
-            }
+    private static boolean isValidAssignment(String input) {
+        if (!input.contains("=")) {
+            return false;
         }
-        return Optional.of(result);
+        String[] variables = input.trim().split(ASSIGNMENT_DELIMITER_REGEX);
+        if (variables.length != 2) {
+            System.out.println("Invalid assignment");
+        }
+        String name = variables[0];
+        String nameOrValue = variables[1];
+        if (!name.matches(LETTERS_REGEX)) {
+            System.out.println("Invalid identifier");
+        }
+        if (nameOrValue.matches(NUMBERS_REGEX) || nameOrValue.matches(LETTERS_REGEX)) {
+            return true;
+        } else {
+            System.out.println("Invalid identifier");
+        }
+
+        return false;
     }
 
     private static void debug(Object obj) {
         if (DEBUG) {
             System.out.println(obj);
         }
-    }
-
-    private static char identifyOperator(String number) {
-        char operator;
-        String operators = number.trim();
-        char initialOperator = operators.charAt(0);
-        operator = operators.length() % 2 == 0
-                   ? OPPOSITE_OPERATORS.get(initialOperator)
-                   : initialOperator;
-        return operator;
     }
 }
