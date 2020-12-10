@@ -1,8 +1,13 @@
 package calculator;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Stack;
+import java.util.stream.Collectors;
 
 /**
  * Calculator logic.
@@ -15,6 +20,9 @@ public class Calculator {
     public static final String LETTERS_REGEX = "[A-Za-z]+";
     public static final String NUMBERS_REGEX = "-?+[\\d]+";
     public static final String EXPRESSION_REGEX = "((-*)|(\\+*)|([a-zA-Z0-9])|(\\s*))+";
+
+    private static final Map<String, Integer> PRECEDENCE =
+        Map.of("+", 0, "-", 0, "*", 1, "/", 1);
 
     private static final String COMMAND_HELP = "/help";
 
@@ -84,5 +92,85 @@ public class Calculator {
         return sign;
     }
 
+    public List<String> infixToPostfix(List<String> input) throws IllegalArgumentException {
+        Stack<String> stack = new Stack<>();
+        List<String> result = new ArrayList<>();
+        for (String incoming : input) {
+            if (incoming.matches(NUMBERS_REGEX)) {
+                //Add operands (numbers and variables) to the result (postfix notation) as they arrive.
+                result.add(incoming);
+                continue;
+            }
+
+            //If the stack is empty push the incoming operator on the stack.
+            if (stack.empty()) {
+                stack.push(incoming);
+                continue;
+            }
+
+            // If the stack contains a left parenthesis on top, push the incoming operator on the stack.
+            if (stack.peek().equals("(")) {
+                stack.push(incoming);
+                continue;
+            }
+
+            //If the incoming element is a left parenthesis, push it on the stack.
+            if (incoming.equals("(")) {
+                stack.push(incoming);
+                continue;
+            }
+
+            // If the incoming element is a right parenthesis,
+            // pop the stack and add operators to the result until you see a left parenthesis.
+            // Discard the pair of parentheses.
+            if (incoming.equals(")")) {
+                String current;
+                do {
+                    result.add(stack.pop());
+                    current = stack.peek();
+                }
+                while (!current.equals("("));
+                stack.pop();
+
+                continue;
+            }
+
+            String top = stack.peek();
+            if (PRECEDENCE.get(incoming).compareTo(PRECEDENCE.get(top)) > 0) {
+                //If the incoming operator has higher precedence than the top of the stack, push it on the stack.
+                stack.push(incoming);
+            } else {
+                //If the incoming operator has lower or equal precedence than the top of the operator stack,
+                // pop the stack and add operators to the result
+                // until you see an operator that has a smaller precedence
+                // or a left parenthesis on the top of the stack;
+                // then add the incoming operator to the stack.
+                String current;
+                do {
+                    current = stack.peek();
+                    result.add(stack.pop());
+                }
+                while (!stack.empty() && !current.equals("(") || PRECEDENCE.get(current).compareTo(PRECEDENCE.get(incoming)) < 0);
+                stack.push(incoming);
+            }
+
+        }
+
+        //At the end of the expression, pop the stack and add all operators to the result.
+        List<String> allOperandsOnStack = stack.stream().filter("+-*/"::contains)
+                                                .collect(Collectors.toList());
+        Collections.reverse(allOperandsOnStack);
+        result.addAll(allOperandsOnStack);
+        stack.removeAll(allOperandsOnStack);
+
+        //No parentheses should remain on the stack. Otherwise, the expression has unbalanced brackets.
+        // It is a syntax error.
+        if (!stack.empty()) {
+            throw new IllegalArgumentException("Incorrect expressions");
+        }
+
+        return result;
+
+    }
 
 }
