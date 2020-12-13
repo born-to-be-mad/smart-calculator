@@ -51,7 +51,7 @@ public class Calculator {
     public int calculate(String input) {
         String[] numbers = input.trim().replaceAll(" {2,}", " ").split(" ");
         int sum = 0;
-        int sign = 1;
+        char sign = '+';
         for (String token : numbers) {
             int value;
             if (token.matches(LETTERS_REGEX)) {
@@ -59,7 +59,20 @@ public class Calculator {
                 sum += sign * value;
             } else if (token.matches(NUMBERS_REGEX)) {
                 value = Integer.parseInt(token);
-                sum += sign * value;
+                switch (sign) {
+                case '+':
+                    sum += value;
+                    break;
+                case '-':
+                    sum -= value;
+                    break;
+                case '*':
+                    sum *= value;
+                    break;
+                case '/':
+                    sum /= value;
+                    break;
+                }
             } else {
                 sign = determineSign(token);
             }
@@ -78,16 +91,16 @@ public class Calculator {
         return Optional.empty();
     }
 
-    private int resolveTheValue(String number) {
-        return variables.get(number) != null ? Integer.parseInt(variables.get(number).toString()) : 0;
+    private int resolveTheValue(String variable) {
+        return variables.get(variable) != null ? Integer.parseInt(variables.get(variable).toString()) : 0;
     }
 
-    private int determineSign(String number) {
-        int sign = 1;
-        if (number.matches("-")) {
-            sign = -1;
-        } else if (number.matches("-+") && number.length() % 2 != 0) {
-            sign = -1;
+    private char determineSign(String input) {
+        char sign;
+        if (input.matches("[-]{2,}")) {
+            sign = input.length() % 2 != 0 ? '-' : '+';
+        } else {
+            sign = input.charAt(0);
         }
         return sign;
     }
