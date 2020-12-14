@@ -1,6 +1,7 @@
 package calculator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -49,16 +50,16 @@ public class Calculator {
     }
 
     public int calculate(String input) {
-        String[] numbers = input.trim().replaceAll(" {2,}", " ").split(" ");
+        String[] elements = input.trim().replaceAll(" {2,}", " ").split(" ");
         int sum = 0;
         char sign = '+';
-        for (String token : numbers) {
+        for (String element : elements) {
             int value;
-            if (token.matches(LETTERS_REGEX)) {
-                value = resolveTheValue(token);
+            if (element.matches(LETTERS_REGEX)) {
+                value = resolveTheValue(element);
                 sum += sign * value;
-            } else if (token.matches(NUMBERS_REGEX)) {
-                value = Integer.parseInt(token);
+            } else if (element.matches(NUMBERS_REGEX)) {
+                value = Integer.parseInt(element);
                 switch (sign) {
                 case '+':
                     sum += value;
@@ -74,10 +75,49 @@ public class Calculator {
                     break;
                 }
             } else {
-                sign = determineSign(token);
+                sign = determineSign(element);
             }
         }
         return sum;
+    }
+
+    public int calculateInPostfixNotation(String expressionInPostfixNotation) {
+        String[] elements = expressionInPostfixNotation.trim().replaceAll(" {2,}", " ").split(" ");
+        return calculateInPostfixNotation(Arrays.asList(elements));
+    }
+
+    public int calculateInPostfixNotation(List<String> elements) {
+        Stack<Integer> stack = new Stack<>();
+        for (String element : elements) {
+            if (element.matches(NUMBERS_REGEX)) {
+                //If the incoming element is a number, push it into the stack
+                stack.push(Integer.parseInt(element));
+            } else if (element.matches(LETTERS_REGEX)) {
+                //If the incoming element is the name of a variable, push its value into the stack.
+                stack.push(resolveTheValue(element));
+            } else {
+                //If the incoming element is an operator, then pop twice to get two numbers
+                // and perform the operation; push the result on the stack.
+                Integer a = stack.pop();
+                Integer b = stack.pop();
+                switch (element.charAt(0)) {
+                case '+':
+                    stack.push(b + a);
+                    break;
+                case '-':
+                    stack.push(b - a);
+                    break;
+                case '*':
+                    stack.push(b * a);
+                    break;
+                case '/':
+                    stack.push(b / a);
+                    break;
+                }
+            }
+        }
+        //When the expression ends, the number on the top of the stack is a final result.
+        return stack.pop();
     }
 
     public Optional<String> getVariableValue(String key) {
@@ -103,6 +143,11 @@ public class Calculator {
             sign = input.charAt(0);
         }
         return sign;
+    }
+
+    public List<String> infixToPostfix(String input) throws IllegalArgumentException {
+        return infixToPostfix(
+            Arrays.asList(input.trim().replaceAll(" {2,}", " ").split(" ")));
     }
 
     public List<String> infixToPostfix(List<String> input) throws IllegalArgumentException {

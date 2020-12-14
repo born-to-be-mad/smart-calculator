@@ -35,6 +35,17 @@ public class CalculatorTest {
     }
 
     @Test
+    public void calculateInPostfixNotation() {
+        Assert.assertEquals(8, calculator.calculateInPostfixNotation("5 3 +"));
+        Assert.assertEquals(12, calculator.calculateInPostfixNotation("5 4 3 + +"));
+
+        Assert.assertEquals(15, calculator.calculateInPostfixNotation("5 3 *"));
+        Assert.assertEquals(35, calculator.calculateInPostfixNotation("5 4 3 + *"));
+
+        Assert.assertEquals(48, calculator.calculateInPostfixNotation("8 3 * 12 4 2 - * +"));
+    }
+
+    @Test
     public void infixToPostfix() {
         Assert.assertEquals("1 2 +", infixToPostfixAsString(List.of("1","+","2")));
         Assert.assertEquals("1 2 *", infixToPostfixAsString(List.of("1", "*", "2")));
@@ -44,6 +55,8 @@ public class CalculatorTest {
 
         Assert.assertEquals("3 2 4 * +", infixToPostfixAsString("3 + 2 * 4"));
         Assert.assertEquals("2 3 4 + * 1 +", infixToPostfixAsString("2 * ( 3 + 4 ) + 1"));
+
+        Assert.assertEquals("8 3 * 12 4 2 - * +", infixToPostfixAsString("8 * 3 + 12 * ( 4 - 2 )"));
     }
 
     private String infixToPostfixAsString(List<String> strings) {

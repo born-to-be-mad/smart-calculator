@@ -1,11 +1,7 @@
 package calculator;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
-import java.util.Stack;
-import java.util.stream.Collectors;
 
 import static calculator.Calculator.EXPRESSION_REGEX;
 import static calculator.Calculator.LETTERS_REGEX;
@@ -40,7 +36,8 @@ public class Main {
                 System.out.println(calculator.getVariableValue(input).orElse("Unknown variable"));
             } else if (!"".equals(input) && input.matches(EXPRESSION_REGEX)) {
                 try {
-                    int sum = calculator.calculate(input);
+                    List<String> postfixExpression = calculator.infixToPostfix(input);
+                    int sum = calculator.calculateInPostfixNotation(postfixExpression);
                     System.out.println(sum);
                 } catch (NumberFormatException e) {
                     System.out.println("Invalid expression");
