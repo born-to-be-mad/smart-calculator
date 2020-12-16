@@ -38,7 +38,7 @@ public class Main {
                     List<String> postfixExpression = calculator.infixToPostfix(input);
                     int sum = calculator.calculateInPostfixNotation(postfixExpression);
                     System.out.println(sum);
-                } catch (NumberFormatException e) {
+                } catch (Exception e) {
                     System.out.println("Invalid expression");
                 }
             }

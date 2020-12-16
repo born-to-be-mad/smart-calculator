@@ -1,8 +1,5 @@
 package calculator;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -35,6 +32,15 @@ public class CalculatorTest {
     }
 
     @Test
+    public void calculateEdgeCases() {
+        Assert.assertEquals(8, calculator.calculate("5 ++ 3"));
+        Assert.assertEquals(8, calculator.calculate("5 -- 3"));
+        Assert.assertEquals(2, calculator.calculate("5 --- 3"));
+        Assert.assertEquals(8, calculator.calculate("5 ---- 3"));
+        Assert.assertEquals(2, calculator.calculate("5 ----- 3"));
+    }
+
+    @Test
     public void calculateInPostfixNotation() {
         Assert.assertEquals(8, calculator.calculateInPostfixNotation("5 3 +"));
         Assert.assertEquals(12, calculator.calculateInPostfixNotation("5 4 3 + +"));
@@ -47,23 +53,30 @@ public class CalculatorTest {
 
     @Test
     public void infixToPostfix() {
-        Assert.assertEquals("1 2 +", infixToPostfixAsString(List.of("1","+","2")));
-        Assert.assertEquals("1 2 *", infixToPostfixAsString(List.of("1", "*", "2")));
-        Assert.assertEquals("1 2 * 3 +", infixToPostfixAsString(List.of("1", "*", "2", "+", "3")));
-        Assert.assertEquals("1 2 * 3 +", infixToPostfixAsString(List.of("1", "*", "2", "+", "3")));
-        Assert.assertEquals("1 2 * 3 4 * +", infixToPostfixAsString(List.of("1", "*", "2", "+", "3", "*", "4")));
-
+        Assert.assertEquals("1 2 +", infixToPostfixAsString("1 + 2"));
+        Assert.assertEquals("1 2 *", infixToPostfixAsString("1 * 2"));
+        Assert.assertEquals("1 2 * 3 +", infixToPostfixAsString("1 * 2 + 3"));
+        Assert.assertEquals("1 2 * 3 +", infixToPostfixAsString("1 * 2 + 3"));
+        Assert.assertEquals("1 2 * 3 4 * +", infixToPostfixAsString("1 * 2 + 3 * 4"));
         Assert.assertEquals("3 2 4 * +", infixToPostfixAsString("3 + 2 * 4"));
-        Assert.assertEquals("2 3 4 + * 1 +", infixToPostfixAsString("2 * ( 3 + 4 ) + 1"));
-
-        Assert.assertEquals("8 3 * 12 4 2 - * +", infixToPostfixAsString("8 * 3 + 12 * ( 4 - 2 )"));
     }
 
-    private String infixToPostfixAsString(List<String> strings) {
-        return String.join(" ", calculator.infixToPostfix(strings));
+    @Test
+    public void infixToPostfix_withBrackets() {
+        Assert.assertEquals("2 3 4 + * 1 +", infixToPostfixAsString("2 * ( 3 + 4 ) + 1"));
+        Assert.assertEquals("2 3 4 + * 1 +", infixToPostfixAsString("2 * (3 + 4) + 1"));
+        Assert.assertEquals("2 3 4 + * 1 +", infixToPostfixAsString("2 * ( 3 + 4) + 1"));
+        Assert.assertEquals("2 3 4 + * 1 +", infixToPostfixAsString("2 * (3 + 4 ) + 1"));
+
+        Assert.assertEquals("8 3 * 12 4 2 - * +", infixToPostfixAsString("8 * 3 + 12 * ( 4 - 2 )"));
+        Assert.assertEquals("8 3 * 12 4 2 - * +", infixToPostfixAsString("8 * 3 + 12 * (4 - 2)"));
+        Assert.assertEquals("8 3 * 12 4 2 - * +", infixToPostfixAsString("8 * 3 + 12 * (4 - 2 )"));
+        Assert.assertEquals("8 3 * 12 4 2 - * +", infixToPostfixAsString("8 * 3 + 12 * ( 4 - 2)"));
+
+        Assert.assertEquals("2 3 4 * + 5 6 * +", infixToPostfixAsString(" 2 + ( 3 * 4 ) + ( 5 * 6)"));
     }
 
     private String infixToPostfixAsString(String string) {
-        return String.join(" ", calculator.infixToPostfix(Arrays.asList(string.split("\\s+"))));
+        return String.join(" ", calculator.infixToPostfix(string));
     }
 }

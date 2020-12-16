@@ -145,12 +145,35 @@ public class Calculator {
         return sign;
     }
 
-    public List<String> infixToPostfix(String input) throws IllegalArgumentException {
-        return infixToPostfix(
-            Arrays.asList(input.trim().replaceAll(" {2,}", " ").split(" ")));
+    private String normalizeSign(String input) {
+        if (input.matches("[-]{2,}")) {
+            return input.length() % 2 != 0 ? "-" : "+";
+        }
+        return input;
     }
 
-    public List<String> infixToPostfix(List<String> input) throws IllegalArgumentException {
+    public List<String> infixToPostfix(String input) throws IllegalArgumentException {
+        List<String> strings = normalize(input);
+        return infixToPostfix(strings);
+    }
+
+    private List<String> normalize(String input) {
+        String[] strings = input.trim()
+                              .replaceAll("\\(", " ( ")
+                              .replaceAll("\\)", " ) ")
+                              .replaceAll("\\+{2,}", "+")
+                              .replaceAll("\\+", " + ")
+                              .replaceAll("\\*", " * ")
+                              .replaceAll("\\/", " / ")
+                              .replaceAll(" {2,}", " ")
+                              .split(" ");
+
+        List<String> result = Arrays.asList(strings);
+        result.replaceAll(this::normalizeSign);
+        return result;
+    }
+
+    private List<String> infixToPostfix(List<String> input) throws IllegalArgumentException {
         Stack<String> stack = new Stack<>();
         List<String> result = new ArrayList<>();
         for (String incoming : input) {
