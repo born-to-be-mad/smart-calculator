@@ -1,30 +1,39 @@
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.List;
 import java.util.Scanner;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 class MaxElementOfStack {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        List<String> operations = IntStream.range(0, scanner.nextInt() + 1)
+/*        List<String> operations = IntStream.range(0, scanner.nextInt() + 1)
                                            .mapToObj(operand -> scanner.nextLine())
-                                           .collect(Collectors.toList());
+                                           .collect(Collectors.toList());*/
         //operations.forEach(System.out::println);
 
         Deque<Long> stack = new ArrayDeque<>();
 
-        operations.forEach(operation -> {
+        long max = Long.MIN_VALUE;
+        int amountOfOperations = scanner.nextInt();
+        for (int i = 0; i <= amountOfOperations; i++) {
+            String operation = scanner.nextLine();
             if (operation.matches("push\\s+\\d+")) {
-                stack.push(Long.valueOf(operation.split("\\s+")[1]));
+                long newValue = Long.parseLong(operation.split("\\s+")[1]);
+                if (newValue > max) {
+                    max = newValue;
+                }
+                stack.push(newValue);
             } else if (operation.equals("pop")) {
-                stack.poll();
+                if (stack.poll() == max) {
+                    max = Long.MIN_VALUE;
+                }
             } else if (operation.equals("max")) {
-                stack.stream().mapToLong(value -> value).max().ifPresent(System.out::println);
+                if (max == Long.MIN_VALUE) {
+                    max = stack.stream().mapToLong(value -> value).max().orElse(Long.MIN_VALUE);
+                }
+                System.out.println(max);
             }
-        });
+        }
 
     }
 }
