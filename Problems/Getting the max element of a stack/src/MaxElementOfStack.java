@@ -13,7 +13,7 @@ class MaxElementOfStack {
         Stack<Long> stack = new Stack<>();
         //Deque<Long> stack = new ArrayDeque<>();
 
-        // tack to keep track of max element
+        // keep track of max elements
         Stack<Long> maxElementsStack = new Stack<>();
 
         int amountOfOperations = scanner.nextInt();
