@@ -82,6 +82,7 @@ public class CalculatorTest {
         Assert.assertEquals("8 3 * 12 4 2 - * +", infixToPostfixAsString("8 * 3 + 12 * ( 4 - 2)"));
 
         Assert.assertEquals("2 3 4 * + 5 6 * +", infixToPostfixAsString(" 2 + ( 3 * 4 ) + ( 5 * 6)"));
+        Assert.assertEquals("7 3 4 3 + 7 * 1 + * 6 2 1 + / - +", infixToPostfixAsString("7 + 3 * ((4 + 3) * 7 + 1) - 6 / (2 + 1)"));
     }
 
     private String infixToPostfixAsString(String string) {

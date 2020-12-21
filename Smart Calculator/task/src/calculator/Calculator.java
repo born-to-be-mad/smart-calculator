@@ -231,7 +231,7 @@ public class Calculator {
                     current = stack.peek();
                     result.add(stack.pop());
                 }
-                while (!stack.empty() && !current.equals("(") || PRECEDENCE.get(current).compareTo(PRECEDENCE.get(incoming)) < 0);
+                while (!stack.empty() && !(current.equals("(") || PRECEDENCE.get(current).compareTo(PRECEDENCE.get(incoming)) > 0));
                 stack.push(incoming);
             }
 

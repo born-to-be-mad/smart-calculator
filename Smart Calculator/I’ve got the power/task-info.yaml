@@ -332,13 +332,8 @@ files:
     }
   learner_created: true
 feedback_link: https://hyperskill.org/projects/42/stages/226/implement#comment
-status: Failed
+status: Solved
 feedback:
-  message: "Wrong answer in test #1\n\nThe program cannot process addition and subtraction\
-    \ operations correctly.\n\nPlease find below the output of your program during\
-    \ this failed test.\nNote that the &#39;&gt;&#39; character indicates the beginning\
-    \ of the input line.\n\n---\n\n&gt; /help\nThe program calculates simple Math\
-    \ operations\n&gt; \n&gt; n = -32\n&gt; 33 + 20 + 11 + 49 - 32 - 9 + 1 - 80 +\
-    \ 4\n-3\n&gt; 33 + 20 + 11 + 49 + n - 9 + 1 - 80 + 4\nInvalid expression"
-  time: Wed, 16 Dec 2020 09:49:55 UTC
+  message: Congratulations!
+  time: Mon, 21 Dec 2020 12:49:22 UTC
 record: -1
