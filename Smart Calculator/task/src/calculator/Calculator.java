@@ -177,7 +177,7 @@ public class Calculator {
         Stack<String> stack = new Stack<>();
         List<String> result = new ArrayList<>();
         for (String incoming : input) {
-            if (incoming.matches(NUMBERS_REGEX)) {
+            if (incoming.matches(NUMBERS_REGEX) || incoming.matches(LETTERS_REGEX)) {
                 //Add operands (numbers and variables) to the result (postfix notation) as they arrive.
                 result.add(incoming);
                 continue;

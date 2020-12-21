@@ -62,6 +62,14 @@ public class CalculatorTest {
     }
 
     @Test
+    public void infixToPostfix_withExpressions() {
+        Assert.assertEquals("a b +", infixToPostfixAsString("a + b"));
+        Assert.assertEquals("a b + c +", infixToPostfixAsString("a + b + c"));
+        Assert.assertEquals("a b c * +", infixToPostfixAsString("a + b * c"));
+        Assert.assertEquals("a b * c d e - * +", infixToPostfixAsString("a * b + c * ( d - e )"));
+    }
+
+    @Test
     public void infixToPostfix_withBrackets() {
         Assert.assertEquals("2 3 4 + * 1 +", infixToPostfixAsString("2 * ( 3 + 4 ) + 1"));
         Assert.assertEquals("2 3 4 + * 1 +", infixToPostfixAsString("2 * (3 + 4) + 1"));

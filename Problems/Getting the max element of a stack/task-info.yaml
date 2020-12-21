@@ -1,6 +1,6 @@
 type: code
 files:
-- name: src/Main.java
+- name: src/MaxElementOfStack.java
   visible: true
   text: |-
     class Main {
@@ -10,5 +10,5 @@ files:
     }
   learner_created: false
 feedback_link: https://hyperskill.org/learn/step/2784#comment
-status: Unchecked
+status: Failed
 record: -1
