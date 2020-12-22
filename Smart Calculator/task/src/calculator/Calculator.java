@@ -1,5 +1,6 @@
 package calculator;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -20,16 +21,16 @@ public class Calculator {
     public static final String ASSIGNMENT_DELIMITER_REGEX = "\\s*=\\s*";
     public static final String LETTERS_REGEX = "[A-Za-z]+";
     public static final String NUMBERS_REGEX = "-?+[\\d]+";
-    public static final String EXPRESSION_REGEX = "((-*)|(\\+*)|([a-zA-Z0-9])|(\\s*))+";
+    private static final String MINUS_NUMBER = "[-]{2,}";
 
     private static final Map<String, Integer> PRECEDENCE =
         Map.of("+", 0, "-", 0, "*", 1, "/", 1);
 
     private static final String COMMAND_HELP = "/help";
 
-    private final Map<String, Integer> variables = new HashMap<>();
+    private final Map<String, BigInteger> variables = new HashMap<>();
 
-    public Map<String, Integer> getVariables() {
+    public Map<String, BigInteger> getVariables() {
         return variables;
     }
 
@@ -39,7 +40,7 @@ public class Calculator {
         String value = strings[1].trim();
 
         if (value.matches(NUMBERS_REGEX)) {
-            variables.put(name, Integer.parseInt(value));
+            variables.put(name, new BigInteger(value));
         } else if (value.matches(LETTERS_REGEX)) {
             if (variables.containsKey(value)) {
                 variables.put(name, variables.get(value));
@@ -49,29 +50,29 @@ public class Calculator {
         }
     }
 
-    public int calculate(String input) {
+    public BigInteger calculate(String input) {
         String[] elements = input.trim().replaceAll(" {2,}", " ").split(" ");
-        int sum = 0;
+        BigInteger sum = BigInteger.ZERO;
         char sign = '+';
         for (String element : elements) {
-            int value;
+            BigInteger value;
             if (element.matches(LETTERS_REGEX)) {
                 value = resolveTheValue(element);
-                sum += sign * value;
+                sum = value;
             } else if (element.matches(NUMBERS_REGEX)) {
-                value = Integer.parseInt(element);
+                value = new BigInteger(element);
                 switch (sign) {
                 case '+':
-                    sum += value;
+                    sum = sum.add(value);
                     break;
                 case '-':
-                    sum -= value;
+                    sum = sum.subtract(value);
                     break;
                 case '*':
-                    sum *= value;
+                    sum = sum.multiply(value);
                     break;
                 case '/':
-                    sum /= value;
+                    sum = sum.divide(value);
                     break;
                 }
             } else {
@@ -81,37 +82,37 @@ public class Calculator {
         return sum;
     }
 
-    public int calculateInPostfixNotation(String expressionInPostfixNotation) {
+    public BigInteger calculateInPostfixNotation(String expressionInPostfixNotation) {
         String[] elements = expressionInPostfixNotation.trim().replaceAll(" {2,}", " ").split(" ");
         return calculateInPostfixNotation(Arrays.asList(elements));
     }
 
-    public int calculateInPostfixNotation(List<String> elements) {
-        Stack<Integer> stack = new Stack<>();
+    public BigInteger calculateInPostfixNotation(List<String> elements) {
+        Stack<BigInteger> stack = new Stack<>();
         for (String element : elements) {
             if (element.matches(NUMBERS_REGEX)) {
                 //If the incoming element is a number, push it into the stack
-                stack.push(Integer.parseInt(element));
+                stack.push(new BigInteger(element));
             } else if (element.matches(LETTERS_REGEX)) {
                 //If the incoming element is the name of a variable, push its value into the stack.
                 stack.push(resolveTheValue(element));
             } else {
                 //If the incoming element is an operator, then pop twice to get two numbers
                 // and perform the operation; push the result on the stack.
-                Integer a = stack.pop();
-                Integer b = stack.pop();
+                BigInteger a = stack.pop();
+                BigInteger b = stack.pop();
                 switch (element.charAt(0)) {
                 case '+':
-                    stack.push(b + a);
+                    stack.push(b.add(a));
                     break;
                 case '-':
-                    stack.push(b - a);
+                    stack.push(b.subtract(a));
                     break;
                 case '*':
-                    stack.push(b * a);
+                    stack.push(b.multiply(a));
                     break;
                 case '/':
-                    stack.push(b / a);
+                    stack.push(b.divide(a));
                     break;
                 }
             }
@@ -131,13 +132,15 @@ public class Calculator {
         return Optional.empty();
     }
 
-    private int resolveTheValue(String variable) {
-        return variables.get(variable) != null ? Integer.parseInt(variables.get(variable).toString()) : 0;
+    private BigInteger resolveTheValue(String variable) {
+        return variables.get(variable) != null
+               ? variables.get(variable)
+               : BigInteger.ZERO;
     }
 
     private char determineSign(String input) {
         char sign;
-        if (input.matches("[-]{2,}")) {
+        if (input.matches(MINUS_NUMBER)) {
             sign = input.length() % 2 != 0 ? '-' : '+';
         } else {
             sign = input.charAt(0);
@@ -146,7 +149,7 @@ public class Calculator {
     }
 
     private String normalizeSign(String input) {
-        if (input.matches("[-]{2,}")) {
+        if (input.matches(MINUS_NUMBER)) {
             return input.length() % 2 != 0 ? "-" : "+";
         }
         return input;

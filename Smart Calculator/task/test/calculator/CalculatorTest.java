@@ -1,5 +1,7 @@
 package calculator;
 
+import java.math.BigInteger;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -15,40 +17,38 @@ public class CalculatorTest {
 
     @Test
     public void calculate() {
-        Assert.assertEquals(8, calculator.calculate("5 + 3"));
-        Assert.assertEquals(12, calculator.calculate("5 + 4 + 3"));
-        Assert.assertEquals(14, calculator.calculate("5 + 4 + 3 + 2"));
+        Assert.assertTrue(BigInteger.valueOf(8).compareTo(calculator.calculate("5 + 3")) == 0);
+        Assert.assertTrue(BigInteger.valueOf(12).compareTo(calculator.calculate("5 + 4 + 3")) == 0);
+        Assert.assertTrue(BigInteger.valueOf(14).compareTo(calculator.calculate("5 + 4 + 3 + 2")) == 0);
+        Assert.assertTrue(BigInteger.valueOf(2).compareTo(calculator.calculate("5 - 3")) == 0);
+        Assert.assertTrue(BigInteger.valueOf(1).compareTo(calculator.calculate("5 - 3 - 1")) == 0);
+        Assert.assertTrue(BigInteger.valueOf(2).compareTo(calculator.calculate("5 - 1 - 1 - 1")) == 0);
 
-        Assert.assertEquals(2, calculator.calculate("5 - 3"));
-        Assert.assertEquals(1, calculator.calculate("5 - 3 - 1"));
-        Assert.assertEquals(2, calculator.calculate("5 - 1 - 1 - 1"));
-
-        Assert.assertEquals(12, calculator.calculate("4 * 3"));
-        Assert.assertEquals(24, calculator.calculate("4 * 3 * 2"));
-
-        Assert.assertEquals(6, calculator.calculate("5 + 1 -- 1 - 1"));
-        Assert.assertEquals(4, calculator.calculate("5 + 1 --- 1 - 1"));
-        Assert.assertEquals(8, calculator.calculate("5 + 1 ---- 1 -- 1"));
+        Assert.assertTrue(BigInteger.valueOf(12).compareTo(calculator.calculate("4 * 3")) == 0);
+        Assert.assertTrue(BigInteger.valueOf(24).compareTo(calculator.calculate("4 * 3 * 2")) == 0);
+        Assert.assertTrue(BigInteger.valueOf(6).compareTo(calculator.calculate("5 + 1 -- 1 - 1")) == 0);
+        Assert.assertTrue(BigInteger.valueOf(4).compareTo(calculator.calculate("5 + 1 --- 1 - 1")) == 0);
+        Assert.assertTrue(BigInteger.valueOf(8).compareTo(calculator.calculate("5 + 1 ---- 1 -- 1")) == 0);
     }
 
     @Test
     public void calculateEdgeCases() {
-        Assert.assertEquals(8, calculator.calculate("5 ++ 3"));
-        Assert.assertEquals(8, calculator.calculate("5 -- 3"));
-        Assert.assertEquals(2, calculator.calculate("5 --- 3"));
-        Assert.assertEquals(8, calculator.calculate("5 ---- 3"));
-        Assert.assertEquals(2, calculator.calculate("5 ----- 3"));
+        Assert.assertTrue(BigInteger.valueOf(8).compareTo(calculator.calculate("5 ++ 3")) == 0);
+        Assert.assertTrue(BigInteger.valueOf(8).compareTo(calculator.calculate("5 -- 3")) == 0);
+        Assert.assertTrue(BigInteger.valueOf(2).compareTo(calculator.calculate("5 --- 3")) == 0);
+        Assert.assertTrue(BigInteger.valueOf(8).compareTo(calculator.calculate("5 ---- 3")) == 0);
+        Assert.assertTrue(BigInteger.valueOf(2).compareTo(calculator.calculate("5 ----- 3")) == 0);
     }
 
     @Test
     public void calculateInPostfixNotation() {
-        Assert.assertEquals(8, calculator.calculateInPostfixNotation("5 3 +"));
-        Assert.assertEquals(12, calculator.calculateInPostfixNotation("5 4 3 + +"));
+        Assert.assertTrue(BigInteger.valueOf(8).compareTo(calculator.calculateInPostfixNotation("5 3 +")) == 0);
+        Assert.assertTrue(BigInteger.valueOf(12).compareTo(calculator.calculateInPostfixNotation("5 4 3 + +")) == 0);
 
-        Assert.assertEquals(15, calculator.calculateInPostfixNotation("5 3 *"));
-        Assert.assertEquals(35, calculator.calculateInPostfixNotation("5 4 3 + *"));
+        Assert.assertTrue(BigInteger.valueOf(15).compareTo(calculator.calculateInPostfixNotation("5 3 *")) == 0);
+        Assert.assertTrue(BigInteger.valueOf(35).compareTo(calculator.calculateInPostfixNotation("5 4 3 + *")) == 0);
 
-        Assert.assertEquals(48, calculator.calculateInPostfixNotation("8 3 * 12 4 2 - * +"));
+        Assert.assertTrue(BigInteger.valueOf(48).compareTo(calculator.calculateInPostfixNotation("8 3 * 12 4 2 - * +")) == 0);
     }
 
     @Test

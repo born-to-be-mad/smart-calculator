@@ -1,5 +1,6 @@
 package calculator;
 
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Scanner;
 
@@ -36,7 +37,7 @@ public class Main {
             } else if (!"".equals(input)) {
                 try {
                     List<String> postfixExpression = calculator.infixToPostfix(input);
-                    int sum = calculator.calculateInPostfixNotation(postfixExpression);
+                    BigInteger sum = calculator.calculateInPostfixNotation(postfixExpression);
                     System.out.println(sum);
                 } catch (Exception e) {
                     System.out.println("Invalid expression");

@@ -1,2 +1,4 @@
 Test.java
  Test
+calculator/CalculatorTest.java
+ calculator.CalculatorTest
